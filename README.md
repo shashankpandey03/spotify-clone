@@ -1,4 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project information
+
+This is a reactjs based ui mimicking spotify application. This is using spotify sdk to play songs and other media player related operations.
+Spotify sdk details can be found on : https://developer.spotify.com/
 
 ## Available Scripts
 
