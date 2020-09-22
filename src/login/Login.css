@@ -1,0 +1,20 @@
+.login {
+    display: grid;
+    place-items : center;
+    height: 100vh;
+    background-color: black;
+}
+
+.login > img {
+    width: 100%;
+    
+}
+
+.login > a {
+    background-color: #1db954;
+    padding: 20px;
+    border-radius: 50px;
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+}
