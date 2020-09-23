@@ -28,6 +28,7 @@ function App() {
         token: _token,
       });
 
+      // Fetch user info from spotify
       spotify.getMe().then(user => {
         console.log('User Info :', user);
 
@@ -36,6 +37,14 @@ function App() {
           type: 'SET_USER',
           user: user,
         });
+      })
+
+      // Fetch playlist info from spotify
+      spotify.getUserPlaylists().then(playlists => {
+        dispatch({
+          type: 'SET_PLAYLIST',
+          playlist : playlists,
+        })
       })
     }
   }, []);
@@ -46,7 +55,8 @@ function App() {
         token ? (
           <Player spotify={spotify}/>
         ) : (
-            <Login />
+            // <Login />
+            <Player spotify={spotify}/>
           )
       }
     </div>
