@@ -11,7 +11,7 @@ const spotify = new SpotifyWebApi();
 function App() {
 
   const [token, setToken] = useState(null);
-  const [{user}, dispatch] = useDataLayerValue();
+  const [{user, playlists}, dispatch] = useDataLayerValue();
 
   useEffect(() => {
     const hash = getTokenFromUrl();
@@ -44,8 +44,17 @@ function App() {
         dispatch({
           type: 'SET_PLAYLIST',
           playlist : playlists,
-        })
-      })
+        });
+
+        // Get recommendations from spotify for playlist at index 0
+        spotify.getPlaylistTracks(playlists?.items[0].id).then(playlistTracks => {
+          dispatch({
+            type: 'SET_PLAYLIST_TRACKS',
+            playlistTracks : playlistTracks,
+          });
+          console.log('Eminem playlist : ', playlistTracks);
+        });
+      });
     }
   }, []);
 
