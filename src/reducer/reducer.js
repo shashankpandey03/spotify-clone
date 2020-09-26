@@ -5,13 +5,32 @@ export const initialState = {
     item: null,
     token: null,
     playlistTracks: null,
+    cuurentPlayingItem: null,
+    isPlaying: true,
+    deviceId: null,
 }
 
+//'BQBOIw8HMqM009KRToUxVU0vw7bdvwArUXk24DRnqlJOjvMzNshZ0AanuNGDtc0cfQ3E7D3DaQYYTxrvQf69VRFON0hsKmdj1nqx-1Oz4hIOSXimgdVu0OO-CJuANJuSrB9LghPLSITmD5YY6Y3AOJd2NO7NicvLndnyqMe0yT92YryPdRPnWso80-V3L8xlTg',
 
 const reducer = (state, action) => {
     console.log(action);
 
     switch (action.type) {
+        case 'SET_DEVICE':
+            return {
+                ...state,
+                deviceId: action.deviceId,
+            }
+        case 'SET_PLAYING':
+            return {
+                ...state,
+                isPlaying: action.playing,
+            }
+        case 'SET_CURRENT_ITEM':
+            return {
+                ...state,
+                cuurentPlayingItem : action.item
+            }
         case 'SET_USER':
             return {
                 ...state,

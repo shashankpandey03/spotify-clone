@@ -25,7 +25,7 @@ function Sidebar() {
             
             { 
                 playlists?.items?.map(playlist =>(
-                    <SidebarOption title={playlist.name} />        
+                    <SidebarOption title={playlist.name} key={playlist.name}/>        
                 )) 
             }
             

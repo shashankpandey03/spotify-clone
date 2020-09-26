@@ -16,6 +16,9 @@ function App() {
   useEffect(() => {
     const hash = getTokenFromUrl();
     window.location.hash = '';
+    //const _token = 'BQBOIw8HMqM009KRToUxVU0vw7bdvwArUXk24DRnqlJOjvMzNshZ0AanuNGDtc0cfQ3E7D3DaQYYTxrvQf69VRFON0hsKmdj1nqx-1Oz4hIOSXimgdVu0OO-CJuANJuSrB9LghPLSITmD5YY6Y3AOJd2NO7NicvLndnyqMe0yT92YryPdRPnWso80-V3L8xlTg';
+    //hash.access_token;
+
     const _token = hash.access_token;
 
     if (_token) {
@@ -39,20 +42,18 @@ function App() {
         });
       })
 
+      spotify.getMyDevices().then((res) => {
+        dispatch({
+          type: 'SET_DEVICE',
+          deviceId: res.devices[0].id,
+        });
+      })
+
       // Fetch playlist info from spotify
       spotify.getUserPlaylists().then(playlists => {
         dispatch({
           type: 'SET_PLAYLIST',
           playlist : playlists,
-        });
-
-        // Get recommendations from spotify for playlist at index 0
-        spotify.getPlaylistTracks(playlists?.items[0].id).then(playlistTracks => {
-          dispatch({
-            type: 'SET_PLAYLIST_TRACKS',
-            playlistTracks : playlistTracks,
-          });
-          console.log('Eminem playlist : ', playlistTracks);
         });
       });
     }
@@ -64,8 +65,8 @@ function App() {
         token ? (
           <Player spotify={spotify}/>
         ) : (
-            // <Login />
-            <Player spotify={spotify}/>
+            <Login />
+            //<Player spotify={spotify}/>
           )
       }
     </div>
