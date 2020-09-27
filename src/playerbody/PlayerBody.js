@@ -14,7 +14,7 @@ import PauseIcon from '@material-ui/icons/PauseCircleFilled';
 
 function PlayerBody({ spotify }) {
 
-    const [{ playlists, deviceId }, dispatch] = useDataLayerValue();
+    const [{ selectedPlayList, deviceId }, dispatch] = useDataLayerValue();
     const [playListTracks, setPlaylistTracks] = useState(null);
     const [audio, setAudio] = useState(null);
     const [isPlaying, setPlaying] = useState(false);
@@ -22,22 +22,24 @@ function PlayerBody({ spotify }) {
 
     let trackId = null;
 
-    if (playlists.items && playlists.items.length > 0) {
-        trackId = playlists.items[0].id;
-
-        if (!playListTracks) {
-            spotify.getPlaylistTracks(trackId).then(playListTracks => {
-                setPlaylistTracks(playListTracks);
-            });
-        }
-    }
-
     // This useEffect method is to added with empty array 
     // to initialize audio. As array is empty it runs only once
     useEffect(() => {
-        let _audio = new Audio();
-        setAudio(_audio);
-    }, []);
+        if(!audio) {
+            let _audio = new Audio();
+            setAudio(_audio);
+        }
+        
+        if (selectedPlayList) {
+            trackId = selectedPlayList.id;
+    
+            if (selectedPlayList) {
+                spotify.getPlaylistTracks(trackId).then(playListTracks => {
+                    setPlaylistTracks(playListTracks);
+                });
+            }
+        }
+    }, [selectedPlayList]);
 
     // Pause current playing song
     const pauseSong = () => {
@@ -93,11 +95,11 @@ function PlayerBody({ spotify }) {
                 <div>
                     <Header spotify={spotify} />
                     <div className='playerbody__info'>
-                        <img src={playlists?.items[0]?.images[0]?.url} alt='' />
+                        <img src={selectedPlayList.images[0].url} alt='' />
                         <div className='playerbody__infoText'>
                             <strong>PLAYLIST</strong>
-                            <h2>{playlists?.items[0]?.name}</h2>
-                            <p>{playlists?.items[0]?.owner?.display_name}</p>
+                            <h2>{selectedPlayList.name}</h2>
+                            <p>{selectedPlayList.owner.display_name}</p>
                             <button className='playerbody__playbutton'>Play</button>
                         </div>
                     </div>

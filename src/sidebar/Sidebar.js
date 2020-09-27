@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Sidebar.css';
 import SidebarOption from './SidebarOption';
 import HomeIcon from '@material-ui/icons/Home';
@@ -9,6 +9,15 @@ import { useDataLayerValue } from '../datalayer/DataLayer';
 function Sidebar() {
     
     const [{playlists}, dispatch] = useDataLayerValue();
+
+    useEffect(() => {
+        if(playlists && playlists.items) {
+            dispatch({
+                type: 'SELECTED_PLAYLIST',
+                selectedPlayList : playlists.items[0],
+            })
+        }
+    },[]);
 
     return (
         <div className='sidebar'>
@@ -25,7 +34,7 @@ function Sidebar() {
             
             { 
                 playlists?.items?.map(playlist =>(
-                    <SidebarOption title={playlist.name} key={playlist.name}/>        
+                    <SidebarOption title={playlist.name} key={playlist.name} playlist={playlist} />        
                 )) 
             }
             

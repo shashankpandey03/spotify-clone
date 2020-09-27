@@ -8,6 +8,7 @@ export const initialState = {
     curentPlayingItem: null,
     deviceId: null,
     audio: null,
+    selectedPlayList: null,
 }
 
 //'BQBOIw8HMqM009KRToUxVU0vw7bdvwArUXk24DRnqlJOjvMzNshZ0AanuNGDtc0cfQ3E7D3DaQYYTxrvQf69VRFON0hsKmdj1nqx-1Oz4hIOSXimgdVu0OO-CJuANJuSrB9LghPLSITmD5YY6Y3AOJd2NO7NicvLndnyqMe0yT92YryPdRPnWso80-V3L8xlTg',
@@ -16,6 +17,11 @@ const reducer = (state, action) => {
     console.log(action);
 
     switch (action.type) {
+        case 'SELECTED_PLAYLIST':
+            return {
+                ...state,
+                selectedPlayList: action.selectedPlayList,
+            }
         case 'SET_PLAYING':
             return {
                 ...state,

@@ -55,6 +55,10 @@ function App() {
           type: 'SET_PLAYLIST',
           playlist : playlists,
         });
+        dispatch({
+          type: 'SELECTED_PLAYLIST',
+          selectedPlayList : playlists.items[0],
+        })
       });
     }
   }, []);

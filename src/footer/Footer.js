@@ -1,28 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import './Footer.css';
 import { useDataLayerValue } from '../datalayer/DataLayer';
-import PlayCircleOutlineOutlineIcon from '@material-ui/icons/PlayCircleOutlineOutlined';
-import SkipPreviousIcon from '@material-ui/icons/SkipPreviousOutlined';
-import SkipNextOutlinedIcon from '@material-ui/icons/SkipNextOutlined';
-import ShuffleOutlinedIcon from '@material-ui/icons/ShuffleOutlined';
-import RepeatOutlinedIcon from '@material-ui/icons/RepeatOutlined';
-import PlayIcon from '@material-ui/icons/PlaylistPlayOutlined';
+import PlayIcon from '@material-ui/icons/PlayCircleOutlineOutlined';
 import PauseIcon from '@material-ui/icons/PauseCircleFilled';
-import { Grid, Slider } from '@material-ui/core';
+import { Slider } from '@material-ui/core';
 import { VolumeDown } from '@material-ui/icons';
 
 function Footer({ spotify }) {
 
     const [{ playing, curentPlayingItem, audio }, dispatch] = useDataLayerValue();
-    const [isPlaying, setPlaying] = useState(false);
+    const [isPlaying, setPlaying] = useState(true);
     const [min, setMin] = useState(0);
     const [max, setMax] = useState(30);
     const [progressValue, setProgressValue] = useState(0);
 
+    //Register a listener to update song play progress in slider
     useEffect(() => {
         if (audio) {
             audio.addEventListener('timeupdate', (e) => {
-                console.log(audio.currentTime);
                 setMin(0);
                 setMax(audio.duration);
                 setProgressValue(audio.currentTime);
@@ -30,10 +25,16 @@ function Footer({ spotify }) {
         }
     }, [audio]);
 
+    const changeVolume = (event, value) => {
+        if(audio) {
+            // Divide volume by 100 as volume settings range between 0 and 1
+            audio.volume = (value/100).toFixed(2);
+        }
+    }
+
     // Pause current playing song
     const pauseSong = () => {
         if (audio && audio.src != null) {
-            audio.src = null;
             audio.pause();
             setPlaying(false);
             dispatch({
@@ -44,28 +45,17 @@ function Footer({ spotify }) {
     }
 
     // Play current clicked song
-    const playSong = (trackId) => {
+    const playSong = () => {
 
-        spotify.getTrack(trackId).then(res => {
+        if (audio && audio.src != null) {
+            audio.play();
+            setPlaying(true);
 
-            if (audio && audio.src != null) {
-                audio.src = null;
-                audio.pause();
-
-                audio.src = res.preview_url;
-                audio.play();
-                setPlaying(true);
-
-                dispatch({
-                    type: "SET_CURRENT_ITEM",
-                    item: res,
-                });
-                dispatch({
-                    type: "SET_AUDIO",
-                    audio: audio,
-                });
-            }
-        });
+            dispatch({
+                type: "SET_AUDIO",
+                audio: audio,
+            });
+        }
     }
 
     return (
@@ -83,12 +73,16 @@ function Footer({ spotify }) {
                     </div>
 
                     <div className='footer__center'>
-                        {!playing && <PlayIcon onClick={() => playSong(curentPlayingItem.track.id)} />}
-                        {playing && <PauseIcon onClick={() => pauseSong()} />}
+                        {curentPlayingItem && !isPlaying && <PlayIcon fontSize="large" onClick={() => playSong()} />}
+                        {curentPlayingItem && isPlaying && <PauseIcon fontSize="large" onClick={() => pauseSong()} />}
                     </div>
 
                     <div className='footer__right'>
                         <VolumeDown />
+                        <Slider orientation="vertical" defaultValue={[30]}
+                            aria-labelledby="volumeSlider" min={0} max={100} step={1}  scale={(x) => x ** 10}
+                            onChange={ changeVolume }
+                        />
                         <p>{(progressValue/100).toFixed(2)}</p>
                         <Slider aria-labelledby="continuous-slider" step={1} min={min} max={max} value={progressValue} />
                         <p>{(max / 100).toFixed(2)}</p>
