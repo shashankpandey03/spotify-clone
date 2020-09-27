@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PlayerBody.css';
 import Header from './Header';
 import { useDataLayerValue } from '../datalayer/DataLayer';
-import { render } from '@testing-library/react';
 import TimeIcon from '@material-ui/icons/Timer';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import PlayIcon from '@material-ui/icons/PlayCircleOutlineOutlined';
+import PauseIcon from '@material-ui/icons/PauseCircleFilled';
 
 function PlayerBody({ spotify }) {
 
     const [{ playlists, deviceId }, dispatch] = useDataLayerValue();
     const [playListTracks, setPlaylistTracks] = useState(null);
+    const [audio, setAudio] = useState(null);
+    const [isPlaying, setPlaying] = useState(false);
+    const [currentItemName, setCurrentItem] = useState(null);
 
     let trackId = null;
+
     if (playlists.items && playlists.items.length > 0) {
         trackId = playlists.items[0].id;
 
@@ -29,21 +32,57 @@ function PlayerBody({ spotify }) {
         }
     }
 
+    // This useEffect method is to added with empty array 
+    // to initialize audio. As array is empty it runs only once
+    useEffect(() => {
+        let _audio = new Audio();
+        setAudio(_audio);
+    }, []);
+
+    // Pause current playing song
+    const pauseSong = () => {
+        if (audio && audio.src != null) {
+            audio.src = null;
+            audio.pause();
+            setPlaying(false);
+            dispatch({
+                type: "SET_AUDIO",
+                audio: audio,
+            });
+            dispatch({
+                type: "SET_PLAYING",
+                playing: false,
+            });
+        }
+    }
+
+    // Play current clicked song
     const playSong = (trackId) => {
-        spotify.play({
-            uris: [`spotify:track:${trackId}`],
-            device_id: deviceId,
-        }).then((res) => {
-            spotify.getMyCurrentPlayingTrack().then((r) => {
+
+        spotify.getTrack(trackId).then(res => {
+
+            if (audio && audio.src != null) {
+                audio.src = null;
+                audio.pause();
+
+                audio.src = res.preview_url;
+                audio.play();
+                setPlaying(true);
+                setCurrentItem(trackId);
+
                 dispatch({
                     type: "SET_CURRENT_ITEM",
-                    item: r.item,
+                    item: res,
+                });
+                dispatch({
+                    type: "SET_AUDIO",
+                    audio: audio,
                 });
                 dispatch({
                     type: "SET_PLAYING",
                     playing: true,
                 });
-            });
+            }
         });
     }
 
@@ -79,11 +118,15 @@ function PlayerBody({ spotify }) {
                             <TableBody className='playerbody__playlist__tableBody'>
                                 {
                                     playListTracks.items.map((row) => (
-            
+
                                         <TableRow key={row.name} >
                                             <TableCell >
-                                                <div className='playerbody__playlist__playIcon' onClick={()=>playSong(row.track.id)}>
-                                                    {<PlayIcon onClick={()=> playSong(row.track.id)}/>}
+                                                <div className='playerbody__playlist__playIcon' >
+
+                                                    { !isPlaying && <PlayIcon onClick={() => playSong(row.track.id)} />}
+
+                                                    { isPlaying && (row.track.id != currentItemName) && <PlayIcon onClick={() => playSong(row.track.id)} />}
+                                                    { isPlaying && (row.track.id === currentItemName) && <PauseIcon onClick={() => pauseSong()} />}
                                                 </div>
                                             </TableCell>
                                             <TableCell className='playerbody__playlist__rowData'>{row.track.name}</TableCell>
@@ -100,7 +143,7 @@ function PlayerBody({ spotify }) {
                 </div>
             }
         </div>
-    ); 
+    );
 }
 
 export default PlayerBody;

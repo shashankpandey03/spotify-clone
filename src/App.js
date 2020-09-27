@@ -42,12 +42,12 @@ function App() {
         });
       })
 
-      spotify.getMyDevices().then((res) => {
-        dispatch({
-          type: 'SET_DEVICE',
-          deviceId: res.devices[0].id,
-        });
-      })
+      // spotify.getMyDevices().then((res) => {
+      //   dispatch({
+      //     type: 'SET_DEVICE',
+      //     deviceId: res.devices[0].id,
+      //   });
+      // })
 
       // Fetch playlist info from spotify
       spotify.getUserPlaylists().then(playlists => {
