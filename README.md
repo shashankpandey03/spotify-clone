@@ -3,7 +3,8 @@
 This is a reactjs based ui mimicking spotify application. This is using spotify sdk to play songs and other media player related operations.
 Spotify sdk details can be found on : https://developer.spotify.com/
 
-**NOTE: Playback requires a premium account. I took a one month one-time subscription for building this
+## NOTE: Playback requires a premium account. I took a one month one-time subscription for building this
+## Deplyed link : https://spotify-clone-shashank.herokuapp.com/
 
 ## Available Scripts
 
